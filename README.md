@@ -105,4 +105,13 @@ The project is organized into two main Django apps:
 5. Session-based authentication ensures secure access to user-specific content.
 6. CSRF protection is enabled for all forms and scraping actions.
 
+## Bonus Features
+
+- Admin-only Dashboard added
+  - Shows Total Books in System
+  - Shows Total Manually Added Books
+  - Shows Your Own Books
+  - Lists Top Contributors
+
+
 ### Made by Ormir Ulaj

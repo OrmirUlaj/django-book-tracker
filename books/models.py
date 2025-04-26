@@ -9,6 +9,7 @@ class Book(models.Model):
     upc = models.CharField(max_length=50)
     num_reviews = models.IntegerField()
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    manually_added = models.BooleanField(default=False)
 
     def __str__(self):
         return self.title

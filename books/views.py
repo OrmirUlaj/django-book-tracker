@@ -5,6 +5,7 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from .models import Book
 from .forms import BookForm
+from django.db.models import Count
 
 @login_required
 def book_list(request):
@@ -26,6 +27,7 @@ def add_book(request):
         if form.is_valid():
             book = form.save(commit=False)
             book.owner = request.user
+            book.manually_added = True
             book.save()
             return redirect('book_list')
     else:
@@ -82,3 +84,26 @@ def logout_view(request):
     if request.method == 'POST':
         logout(request)
         return redirect('login')
+    
+
+### Optional Dashboard
+@login_required
+def dashboard(request):
+    total_books = Book.objects.count()
+    user_books = Book.objects.filter(owner=request.user).count()
+    total_manual_books = Book.objects.filter(manually_added=True).count()
+
+    top_contributors = None
+    if request.user.is_superuser:
+        top_contributors = (
+            Book.objects.values('owner__username')
+            .annotate(total=Count('id'))
+            .order_by('-total')[:5]
+        )
+
+    return render(request, 'books/dashboard.html', {
+        'total_books': total_books,
+        'user_books': user_books,
+        'total_manual_books': total_manual_books,
+        'top_contributors': top_contributors,
+    })
